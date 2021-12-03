@@ -1,6 +1,6 @@
 # InsCLR: Improving Instance Retrieval with Self-Supervision
 
-This is an official PyTorch implementation of the [InsCLR paper](https://arxiv.org/).
+This is an official PyTorch implementation of the [InsCLR paper](https://arxiv.org/abs/2112.01390).
 
 ## Download Dataset
 |Dataset|Image|Annotation|
