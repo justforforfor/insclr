@@ -1,0 +1,60 @@
+OUTPUT_DIR: "training_dir/instre/s1/"
+
+DATA:
+  DATASET: "instre"
+  ROOT: "datasets/instre"
+  TRAIN_FILENAME: "train.txt"
+
+INPUT:
+  SCALE_LOWER: 0.75
+  SCALE_UPPER: 1.0
+  TRAIN_IMG_SIZE: (224, 224)
+  TEST_IMG_SIZE: (256, 256)
+
+MODEL:
+  PRETRAIN: "imagenet"
+  BACKBONE:
+    NAME: "resnet50"
+  POOL:
+    NAME: "gem"
+  HEAD:
+    ENABLE: True
+    NAME: "linear_norm"
+    OUT_DIM: 256
+
+LOSS:
+  NAME: "contrastive_loss"
+  CONTRASTIVE_LOSS:
+    MARGIN: 0.4
+
+SOLVER:
+  IMS_PER_BATCH: 24
+  NAME: "adam"
+  BASE_LR: 3e-4
+  WEIGHT_DECAY: 1e-4
+  STEPS: [4000]
+  SCHEDULER_NAME: "WarmupMultiStepLR"
+  CHECKPOINT_PERIOD: 4000
+  MAX_STEP: 4000
+  GRAD_MAX_NORM: 10
+
+TEST:
+  IMS_PER_BATCH: 256
+  TEST_PERIOD: 4000
+  SCALES: [1.0]
+
+XBM:
+  ENABLE: True
+  VERSION: "v1"
+  SIZE: 27293
+  FEATURE_DIM: 256
+  START_STEP: 5000
+  GET_STEP: 5000
+  GET_SIZE: 27293
+  MEMORY_LOSS_ONLY: False
+  MEMORY_LOSS_WEIGHT: 1.0
+
+NEIGHBOR:
+  SRC: "training_dir/neighbor/instre/s0_r50_neighbor.npz"
+  K: 3
+

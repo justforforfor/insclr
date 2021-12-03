@@ -1,0 +1,4 @@
+from .roxford5k_evaluation import ROxford5kEvaluator
+from .rparis6k_evaluation import RParis6kEvaluator
+from .instre_evaluation import InstreEvaluator
+from .gld_retrieval_evaluation import GLDRetrievalEvaluator

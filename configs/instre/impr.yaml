@@ -1,0 +1,75 @@
+OUTPUT_DIR: "training_dir/instre/s2/"
+
+DATA:
+  DATASET: "instre"
+  ROOT: "datasets/instre"
+  TRAIN_FILENAME: "train.txt"
+
+INPUT:
+  SCALE_LOWER: 0.75
+  SCALE_UPPER: 1.0
+  TRAIN_IMG_SIZE: (224, 226)
+  TEST_IMG_SIZE: (256, 256)
+
+MODEL:
+  PRETRAIN: "training_dir/neighbor/instre/s1_r50_model.pth"
+  BACKBONE:
+    NAME: "resnet50"
+  POOL:
+    NAME: "gem"
+  HEAD:
+    ENABLE: True
+    NAME: "linear_norm"
+    OUT_DIM: 256
+
+LOSS:
+  NAME: "contrastive_loss"
+  CONTRASTIVE_LOSS:
+    MARGIN: 0.4
+
+SOLVER:
+  IMS_PER_BATCH: 24
+  NAME: "adam"
+  BASE_LR: 3e-5
+  WEIGHT_DECAY: 1e-4
+  STEPS: [4000]
+  SCHEDULER_NAME: "WarmupMultiStepLR"
+  CHECKPOINT_PERIOD: 4000
+  MAX_STEP: 4000
+  GRAD_MAX_NORM: 10
+
+TEST:
+  IMS_PER_BATCH: 256
+  TEST_PERIOD: 4000
+  SCALES: [1.0]
+
+NOAUG:
+  ENABLE: True
+  SCALES: [1.0]
+
+XBM:
+  ENABLE: True
+  VERSION: "v2"
+  SIZE: 27293
+  FEATURE_DIM: 256
+  START_STEP: 0
+  GET_STEP: 0
+  GET_SIZE: 27293
+  MEMORY_LOSS_ONLY: False
+  MEMORY_LOSS_WEIGHT: 1.0
+  USE_NEGATIVE: False
+  CANDIDATE_MODE: "b+i_tr2_avg0.60_k20"
+  POSITIVE_THRESH: 0.95
+  NEGATIVE_THRESH: 0.65
+
+SELECTION:
+  ENABLE: True
+  USE_NOAUG_SIMILARITY: True
+  THRESH: 0.6
+  ALWAYS_TRUE: 0
+  TYPE: "fixed"
+
+NEIGHBOR:
+  FEATURE: "training_dir/neighbor/instre/s1_r50_feature.npz"
+  SRC: "training_dir/neighbor/instre/s1_r50_neighbor.npz"
+  K: 3

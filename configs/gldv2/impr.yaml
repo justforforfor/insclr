@@ -1,0 +1,68 @@
+OUTPUT_DIR: "training_dir/gldv2/s4/"
+
+INPUT:
+  SCALE_LOWER: 0.4
+  SCALE_UPPER: 1.0
+  TRAIN_IMG_SIZE: (448, 448)
+  TEST_IMG_SIZE: (512, 512)
+
+MODEL:
+  PRETRAIN: "training_dir/neighbor/gldv2/s3_r101_model.pth"
+  BACKBONE:
+    NAME: "resnet101"
+  HEAD:
+    ENABLE: True
+    NAME: "norm_linear_norm"
+    OUT_DIM: 2048
+
+LOSS:
+  NAME: "contrastive_loss"
+  CONTRASTIVE_LOSS:
+    MARGIN: 0.4
+
+SOLVER:
+  IMS_PER_BATCH: 16
+  NAME: "adam"
+  BASE_LR: 3e-5
+  WEIGHT_DECAY: 1e-4
+  STEPS: [20000]
+  SCHEDULER_NAME: "WarmupMultiStepLR"
+  CHECKPOINT_PERIOD: 5000
+  MAX_STEP: 40000
+
+TEST:
+  IMS_PER_BATCH: 256
+  TEST_PERIOD: 5000
+
+NOAUG:
+  ENABLE: True
+  SCALES: [1.0]
+
+XBM:
+  ENABLE: True
+  VERSION: "v2"
+  SIZE: 1223195
+  FEATURE_DIM: 2048
+  START_STEP: 0
+  GET_STEP: 0
+  GET_SIZE: 100000
+  MEMORY_LOSS_ONLY: False
+  MEMORY_LOSS_WEIGHT: 1.0
+
+  CANDIDATE_MODE: "b+i_tr4_avg0.60_k05"
+  POSITIVE_THRESH: 0.75
+  NEGATIVE_THRESH: 0.5
+
+
+SELECTION:
+  ENABLE: True
+  USE_NOAUG_SIMILARITY: True
+  THRESH: 0.6
+  ALWAYS_TRUE: 0
+  TYPE: "fixed"
+
+
+NEIGHBOR:
+  FEATURE: "training_dir/neighbor/gldv2/s3_r101_feature.npz"
+  SRC: "training_dir/neighbor/gldv2/s3_r101_neighbor.npz"
+  K: 3
